@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Veltistos Informatics LLC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cyan: #00d4d4;
+      --cyan-bright: #00ffff;
+      --cyan-dim: rgba(0, 212, 212, 0.15);
+      --cyan-border: rgba(0, 212, 212, 0.35);
+      --bg: #050a0a;
+      --bg-section: #061414;
+      --bg-card: #071a1a;
+      --text: #c8e6e6;
+      --text-muted: #7aadad;
+      --mono: 'Space Mono', monospace;
+      --sans: 'Inter', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      height: 64px;
+      background: rgba(5, 10, 10, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--cyan-border);
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .nav-logo svg { width: 36px; height: 36px; }
+
+    .nav-logo-text {
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--cyan);
+      letter-spacing: 0.05em;
+      line-height: 1.2;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text-muted);
+      text-decoration: none;
+      letter-spacing: 0.1em;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--cyan); }
+
+    .btn-connect {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      color: var(--cyan);
+      background: transparent;
+      border: 1px solid var(--cyan);
+      padding: 8px 20px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .btn-connect:hover {
+      background: var(--cyan);
+      color: var(--bg);
+    }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 100px 24px 60px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 60%, rgba(0,212,212,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-title {
+      font-family: var(--mono);
+      font-size: clamp(40px, 9vw, 110px);
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      color: var(--cyan);
+      text-shadow: 0 0 40px rgba(0, 212, 212, 0.4);
+      margin-bottom: 48px;
+      line-height: 1;
+    }
+
+    /* SVG Globe */
+    .globe-wrap {
+      position: relative;
+      width: min(420px, 80vw);
+      height: min(420px, 80vw);
+      margin: 0 auto 48px;
+    }
+
+    .globe-wrap svg {
+      width: 100%;
+      height: 100%;
+      animation: rotateSVG 30s linear infinite;
+      filter: drop-shadow(0 0 24px rgba(0,212,212,0.5));
+    }
+
+    @keyframes rotateSVG {
+      from { transform: rotateY(0deg); }
+      to   { transform: rotateY(360deg); }
+    }
+
+    .hero-badge {
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      border: 1px solid var(--cyan-border);
+      padding: 20px 36px;
+      margin-bottom: 32px;
+    }
+
+    .hero-badge span {
+      display: block;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .btn-primary {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      color: var(--bg);
+      background: var(--cyan);
+      border: none;
+      padding: 12px 32px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-primary:hover {
+      background: var(--cyan-bright);
+      box-shadow: 0 0 24px rgba(0,255,255,0.4);
+    }
+
+    /* ── SECTION SHARED ── */
+    section { padding: 100px 24px; }
+
+    .section-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      border-left: 2px solid var(--cyan);
+      padding-left: 12px;
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-family: var(--mono);
+      font-size: clamp(28px, 5vw, 52px);
+      font-weight: 700;
+      color: var(--cyan);
+      letter-spacing: 0.1em;
+      margin-bottom: 48px;
+      line-height: 1.1;
+    }
+
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+    }
+
+    /* ── ABOUT ── */
+    #about {
+      background: var(--bg-section);
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+    }
+
+    .about-heading {
+      font-size: clamp(22px, 3.5vw, 36px);
+      font-weight: 600;
+      color: var(--cyan);
+      line-height: 1.3;
+      margin-bottom: 24px;
+      font-family: var(--sans);
+    }
+
+    .about-body {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+
+    .about-visual {
+      position: relative;
+      aspect-ratio: 1;
+      max-width: 380px;
+      margin: 0 auto;
+    }
+
+    .about-visual svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 0 16px rgba(0,212,212,0.4));
+    }
+
+    /* ── PHILOSOPHY ── */
+    #philosophy {
+      background: var(--bg);
+    }
+
+    .philosophy-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .phi-card {
+      border: 1px solid var(--cyan-border);
+      padding: 32px 28px;
+      background: var(--bg-card);
+      transition: border-color 0.3s, transform 0.3s;
+    }
+
+    .phi-card:hover {
+      border-color: var(--cyan);
+      transform: translateY(-4px);
+    }
+
+    .phi-num {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      color: var(--cyan);
+      margin-bottom: 16px;
+    }
+
+    .phi-card hr {
+      border: none;
+      border-top: 1px solid var(--cyan-border);
+      margin-bottom: 20px;
+    }
+
+    .phi-title {
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--cyan);
+      margin-bottom: 16px;
+    }
+
+    .phi-body {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+
+    /* ── APPS ── */
+    #apps {
+      background: var(--bg-section);
+    }
+
+    .apps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .app-card {
+      border: 1px solid var(--cyan-border);
+      background: var(--bg-card);
+      padding: 28px;
+      transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .app-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .app-card:hover {
+      border-color: var(--cyan);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0,212,212,0.1);
+    }
+
+    .app-card:hover::before { opacity: 1; }
+
+    .app-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 16px;
+      margin-bottom: 20px;
+      object-fit: cover;
+      display: block;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .app-card:hover .app-icon {
+      transform: scale(1.06);
+      box-shadow: 0 8px 28px rgba(0,212,212,0.2);
+    }
+
+    .app-name {
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--cyan);
+      margin-bottom: 10px;
+    }
+
+    .app-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    /* ── CONTACT ── */
+    #contact {
+      background: var(--bg);
+    }
+
+    .contact-box {
+      border: 1px solid var(--cyan-border);
+      padding: 56px 48px;
+      max-width: 640px;
+    }
+
+    .contact-status {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: var(--cyan);
+      margin-bottom: 8px;
+    }
+
+    .contact-status::before {
+      content: '● ';
+      color: #00ff88;
+      animation: blink 1.5s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.2; }
+    }
+
+    .contact-head {
+      font-family: var(--mono);
+      font-size: clamp(24px, 4vw, 40px);
+      font-weight: 700;
+      color: var(--cyan);
+      letter-spacing: 0.12em;
+      margin-bottom: 12px;
+    }
+
+    .contact-divider {
+      border: none;
+      border-top: 1px solid var(--cyan-border);
+      margin-bottom: 36px;
+    }
+
+    .contact-group { margin-bottom: 28px; }
+
+    .contact-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .contact-val {
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    .contact-val a {
+      color: var(--cyan);
+      text-decoration: none;
+    }
+
+    .contact-val a:hover { text-decoration: underline; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--cyan-border);
+      padding: 32px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .footer-copy {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+      text-align: center;
+      flex: 1;
+    }
+
+    .footer-socials {
+      display: flex;
+      gap: 14px;
+    }
+
+    .footer-socials a {
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--cyan-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13px;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .footer-socials a:hover {
+      border-color: var(--cyan);
+      color: var(--cyan);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 0 20px; }
+      .about-grid { grid-template-columns: 1fr; }
+      .philosophy-grid { grid-template-columns: 1fr; }
+      .apps-grid { grid-template-columns: 1fr; }
+      footer { flex-direction: column; align-items: flex-start; }
+      .contact-box { padding: 36px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <a href="#hero" class="nav-logo">
+    <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="18" cy="18" r="16" stroke="#00d4d4" stroke-width="1.2"/>
+      <circle cx="18" cy="18" r="9" stroke="#00d4d4" stroke-width="0.8" stroke-dasharray="3 2"/>
+      <line x1="18" y1="2" x2="18" y2="34" stroke="#00d4d4" stroke-width="0.6"/>
+      <line x1="2" y1="18" x2="34" y2="18" stroke="#00d4d4" stroke-width="0.6"/>
+      <circle cx="18" cy="18" r="2.5" fill="#00d4d4"/>
+    </svg>
+    <span class="nav-logo-text">Veltistos<br>Informatics</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#about">ABOUT</a></li>
+    <li><a href="#philosophy">PHILOSOPHY</a></li>
+    <li><a href="#apps">PROJECTS</a></li>
+  </ul>
+  <a href="#contact" class="btn-connect">CONNECT</a>
+</nav>
+
+<!-- ── HERO ── -->
+<section id="hero">
+  <h1 class="hero-title">VELTISTOS</h1>
+
+  <!-- Wireframe Globe SVG -->
+  <div class="globe-wrap">
+    <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="globeGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#00d4d4" stop-opacity="0.12"/>
+          <stop offset="100%" stop-color="#00d4d4" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <!-- Glow background -->
+      <ellipse cx="200" cy="200" rx="180" ry="180" fill="url(#globeGlow)"/>
+      <!-- Outer circle -->
+      <circle cx="200" cy="200" r="160" stroke="#00d4d4" stroke-width="1" fill="none" opacity="0.7"/>
+      <!-- Latitude lines -->
+      <ellipse cx="200" cy="200" rx="160" ry="40" stroke="#00d4d4" stroke-width="0.6" fill="none" opacity="0.5"/>
+      <ellipse cx="200" cy="200" rx="160" ry="90" stroke="#00d4d4" stroke-width="0.6" fill="none" opacity="0.45"/>
+      <ellipse cx="200" cy="140" rx="135" ry="32" stroke="#00d4d4" stroke-width="0.5" fill="none" opacity="0.4"/>
+      <ellipse cx="200" cy="260" rx="135" ry="32" stroke="#00d4d4" stroke-width="0.5" fill="none" opacity="0.4"/>
+      <ellipse cx="200" cy="80"  rx="90" ry="20" stroke="#00d4d4" stroke-width="0.5" fill="none" opacity="0.35"/>
+      <ellipse cx="200" cy="320" rx="90" ry="20" stroke="#00d4d4" stroke-width="0.5" fill="none" opacity="0.35"/>
+      <!-- Vertical meridians -->
+      <ellipse cx="200" cy="200" rx="80"  ry="160" stroke="#00d4d4" stroke-width="0.5" fill="none" opacity="0.5"/>
+      <ellipse cx="200" cy="200" rx="30"  ry="160" stroke="#00d4d4" stroke-width="0.4" fill="none" opacity="0.4"/>
+      <ellipse cx="200" cy="200" rx="130" ry="160" stroke="#00d4d4" stroke-width="0.5" fill="none" opacity="0.5"/>
+      <!-- Vertical axis -->
+      <line x1="200" y1="40" x2="200" y2="360" stroke="#00d4d4" stroke-width="0.6" opacity="0.5"/>
+      <!-- Horizontal axis -->
+      <line x1="40" y1="200" x2="360" y2="200" stroke="#00d4d4" stroke-width="0.6" opacity="0.5"/>
+      <!-- Node dots -->
+      <circle cx="200" cy="200" r="4" fill="#00d4d4" opacity="0.9"/>
+      <circle cx="280" cy="155" r="2.5" fill="#00d4d4" opacity="0.8"/>
+      <circle cx="140" cy="170" r="2"   fill="#00d4d4" opacity="0.7"/>
+      <circle cx="310" cy="230" r="2"   fill="#00d4d4" opacity="0.7"/>
+      <circle cx="160" cy="240" r="2.5" fill="#00d4d4" opacity="0.8"/>
+      <circle cx="240" cy="120" r="2"   fill="#00d4d4" opacity="0.7"/>
+      <!-- Connection lines between nodes -->
+      <line x1="200" y1="200" x2="280" y2="155" stroke="#00d4d4" stroke-width="0.7" opacity="0.5"/>
+      <line x1="200" y1="200" x2="140" y2="170" stroke="#00d4d4" stroke-width="0.7" opacity="0.5"/>
+      <line x1="200" y1="200" x2="310" y2="230" stroke="#00d4d4" stroke-width="0.7" opacity="0.5"/>
+      <line x1="200" y1="200" x2="160" y2="240" stroke="#00d4d4" stroke-width="0.7" opacity="0.5"/>
+      <line x1="280" y1="155" x2="240" y2="120" stroke="#00d4d4" stroke-width="0.5" opacity="0.35"/>
+      <line x1="140" y1="170" x2="160" y2="240" stroke="#00d4d4" stroke-width="0.5" opacity="0.35"/>
+    </svg>
+  </div>
+
+  <div class="hero-badge">
+    <span>SPATIAL INTELLIGENCE DESIGN STUDIO</span>
+    <a href="#apps" class="btn-primary">EXPLORE INNOVATION</a>
+  </div>
+</section>
+
+<!-- ── ABOUT ── -->
+<section id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div>
+        <p class="section-label">01 // MISSION</p>
+        <h2 class="about-heading">Designing the Future of Human-Location Interaction Through Spatial Intelligence</h2>
+        <p class="about-body">Veltistos Informatics LLC reimagines how people interact with the world through spatial intelligence. We develop human-centered AI applications that connect places, data, and human experience in entirely new ways.</p>
+      </div>
+      <!-- Cube SVG -->
+      <div class="about-visual">
+        <svg viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="cubeGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#00d4d4" stop-opacity="0.08"/>
+              <stop offset="100%" stop-color="#00d4d4" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <rect width="360" height="360" fill="url(#cubeGlow)"/>
+          <!-- Outer cube -->
+          <polygon points="180,60 310,130 310,250 180,320 50,250 50,130" stroke="#00d4d4" stroke-width="1.2" fill="none" opacity="0.6"/>
+          <!-- Inner cube -->
+          <polygon points="180,110 260,155 260,245 180,290 100,245 100,155" stroke="#00d4d4" stroke-width="0.8" fill="none" opacity="0.5"/>
+          <!-- Vertical connecting lines -->
+          <line x1="180" y1="60"  x2="180" y2="110" stroke="#00d4d4" stroke-width="0.7" opacity="0.5"/>
+          <line x1="310" y1="130" x2="260" y2="155" stroke="#00d4d4" stroke-width="0.7" opacity="0.5"/>
+          <line x1="310" y1="250" x2="260" y2="245" stroke="#00d4d4" stroke-width="0.7" opacity="0.5"/>
+          <line x1="180" y1="320" x2="180" y2="290" stroke="#00d4d4" stroke-width="0.7" opacity="0.5"/>
+          <line x1="50"  y1="250" x2="100" y2="245" stroke="#00d4d4" stroke-width="0.7" opacity="0.5"/>
+          <line x1="50"  y1="130" x2="100" y2="155" stroke="#00d4d4" stroke-width="0.7" opacity="0.5"/>
+          <!-- Center glow -->
+          <circle cx="180" cy="200" r="16" fill="#00d4d4" opacity="0.15"/>
+          <circle cx="180" cy="200" r="6"  fill="#00d4d4" opacity="0.8"/>
+          <!-- Grid lines inside -->
+          <line x1="180" y1="60"  x2="180" y2="320" stroke="#00d4d4" stroke-width="0.4" opacity="0.3" stroke-dasharray="4 3"/>
+          <line x1="50"  y1="190" x2="310" y2="190" stroke="#00d4d4" stroke-width="0.4" opacity="0.3" stroke-dasharray="4 3"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PHILOSOPHY ── -->
+<section id="philosophy">
+  <div class="container">
+    <p class="section-label">02 // STRATEGIC VISION</p>
+    <h2 class="section-title">CORE PHILOSOPHY</h2>
+    <div class="philosophy-grid">
+      <div class="phi-card">
+        <p class="phi-num">01 SPATIAL INTELLIGENCE</p>
+        <hr>
+        <p class="phi-body">Designing intelligent spatial systems that reshape how humans perceive and interact with places. We transform location-based data into intuitive digital experiences.</p>
+      </div>
+      <div class="phi-card">
+        <p class="phi-num">02 HUMAN–AI INTEGRATION</p>
+        <hr>
+        <p class="phi-body">Building AI applications that understand context, environment, and human behavior. Our systems enhance connection, communication, and everyday decision-making.</p>
+      </div>
+      <div class="phi-card">
+        <p class="phi-num">03 HUMAN-CENTERED DESIGN</p>
+        <hr>
+        <p class="phi-body">Creating technology that serves people first. We prioritize clarity, empathy, and accessibility in every spatial experience.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── APPS ── -->
+<section id="apps">
+  <div class="container">
+    <p class="section-label">[ SYSTEM_VERSION_4.0 // ACTIVE_PROJECTS ]</p>
+    <h2 class="section-title">MISSION LOG</h2>
+    <div class="apps-grid">
+
+      <!-- 1 -->
+      <div class="app-card">
+        <img src="icons/space-weather-forecast.png" alt="Space Weather Forecast" class="app-icon">
+        <p class="app-name">SPACE WEATHER FORECAST</p>
+        <p class="app-desc">Real-time visualization of solar activity, geomagnetic storms, and auroral forecasts. Bringing cosmic environmental data to everyday users.</p>
+      </div>
+
+      <!-- 2 -->
+      <div class="app-card">
+        <img src="icons/four-dimensional-space.png" alt="Four Dimensional Space" class="app-icon">
+        <p class="app-name">FOUR DIMENSIONAL SPACE</p>
+        <p class="app-desc">An immersive 4D spatial exploration tool that challenges perception of geometry and dimension through interactive visualization.</p>
+      </div>
+
+      <!-- 3 -->
+      <div class="app-card">
+        <img src="icons/tap-the-country.png" alt="Tap The Country" class="app-icon">
+        <p class="app-name">TAP THE COUNTRY</p>
+        <p class="app-desc">An interactive geography learning app where users explore world nations through intuitive map-based gameplay and spatial reasoning challenges.</p>
+      </div>
+
+      <!-- 4 -->
+      <div class="app-card">
+        <img src="icons/bottle-drift-world.png" alt="Bottle Drift World" class="app-icon">
+        <p class="app-name">BOTTLE DRIFT WORLD</p>
+        <p class="app-desc">Send a message into the ocean and watch it drift around the world. Discover bottles from other users near you in real time.</p>
+      </div>
+
+      <!-- 5 -->
+      <div class="app-card">
+        <img src="icons/just-walk-the-globe.png" alt="Just Walk The Globe" class="app-icon">
+        <p class="app-name">JUST WALK THE GLOBE</p>
+        <p class="app-desc">Turn daily steps into a global journey. Walk the Earth virtually as your real-world movement maps to destinations around the planet.</p>
+      </div>
+
+      <!-- 6 -->
+      <div class="app-card">
+        <img src="icons/urban-greenup.png" alt="Urban GreenUp" class="app-icon">
+        <p class="app-name">URBAN GREENUP</p>
+        <p class="app-desc">Mapping and tracking urban greenery health across cities. Empowering communities to monitor and improve their environmental footprint.</p>
+      </div>
+
+      <!-- 7 -->
+      <div class="app-card">
+        <img src="icons/air-water-intelligence-map.png" alt="Air & Water Intelligence Map" class="app-icon">
+        <p class="app-name">AIR &amp; WATER INTELLIGENCE MAP</p>
+        <p class="app-desc">A live environmental quality monitor displaying air pollution and water safety data on an interactive spatial intelligence map.</p>
+      </div>
+
+      <!-- 8 -->
+      <div class="app-card">
+        <img src="icons/cognimap.png" alt="CogniMap" class="app-icon">
+        <p class="app-name">COGNIMAP</p>
+        <p class="app-desc">A next-generation cognitive mapping tool that visualizes how people mentally perceive and navigate urban environments and neighborhoods.</p>
+      </div>
+
+      <!-- 9 -->
+      <div class="app-card">
+        <img src="icons/quantum-route-finder.png" alt="Quantum Route Finder" class="app-icon">
+        <p class="app-name">QUANTUM ROUTE FINDER</p>
+        <p class="app-desc">Quantum Route Finder lets you run real quantum circuits on IBM's quantum computers directly from your iPhone.</p>
+      </div>
+
+      <!-- 10 -->
+      <div class="app-card">
+        <img src="icons/milk-checker.png" alt="Milk Checker" class="app-icon">
+        <p class="app-name">MILK CHECKER</p>
+        <p class="app-desc">Milk Checker helps international travelers easily identify milk and soy milk products in Japan.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── CONTACT ── -->
+<section id="contact">
+  <div class="container">
+    <div class="contact-box">
+      <p class="contact-status">STATUS: ACTIVE</p>
+      <h2 class="contact-head">CONTACT NODE</h2>
+      <hr class="contact-divider">
+
+      <div class="contact-group">
+        <p class="contact-label">[ COORDINATES ]</p>
+        <p class="contact-val">Veltistos Informatics LLC</p>
+      </div>
+
+      <div class="contact-group">
+        <p class="contact-label">ADDRESS</p>
+        <p class="contact-val">
+          R CUBE AOYAMA 3F<br>
+          1-3-1 KITAAOYAMA, MINATO-KU<br>
+          TOKYO 107-0061<br>
+          JAPAN
+        </p>
+      </div>
+
+      <div class="contact-group">
+        <p class="contact-label">EMAIL</p>
+        <p class="contact-val"><a href="mailto:toru@vel-info.com">toru@vel-info.com</a></p>
+      </div>
+
+      <div class="contact-group">
+        <p class="contact-label">PHONE</p>
+        <p class="contact-val"><a href="tel:+819018591966">+81 90 1859 1966</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-logo">
+    <svg width="28" height="28" viewBox="0 0 36 36" fill="none">
+      <circle cx="18" cy="18" r="16" stroke="#00d4d4" stroke-width="1.2"/>
+      <circle cx="18" cy="18" r="9" stroke="#00d4d4" stroke-width="0.8" stroke-dasharray="3 2"/>
+      <circle cx="18" cy="18" r="2.5" fill="#00d4d4"/>
+    </svg>
+    <span style="font-family:var(--mono);font-size:11px;color:var(--cyan);letter-spacing:0.08em;">Veltistos Informatics</span>
+  </div>
+  <p class="footer-copy">
+    © 2026 VELTISTOS INFORMATICS LLC. | REDESIGNING THE SPATIAL EXPERIENCE. ALL RIGHTS RESERVED.
+  </p>
+  <div class="footer-socials">
+    <a href="#" aria-label="Facebook">f</a>
+    <a href="#" aria-label="Instagram">in</a>
+    <a href="#" aria-label="YouTube">▶</a>
+    <a href="#" aria-label="X">✕</a>
+    <a href="#" aria-label="LinkedIn">Li</a>
+    <a href="#" aria-label="TikTok">♪</a>
+  </div>
+</footer>
+
+</body>
+</html>
