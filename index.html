@@ -137,25 +137,25 @@
       line-height: 1;
     }
 
-    /* SVG Globe */
+    /* Holographic Globe (canvas) */
     .globe-wrap {
       position: relative;
-      width: min(420px, 80vw);
-      height: min(420px, 80vw);
-      margin: 0 auto 48px;
+      width: min(560px, 92vw);
+      aspect-ratio: 1 / 1;
+      margin: -40px auto 8px;
     }
 
-    .globe-wrap svg {
+    .globe-wrap canvas {
+      position: absolute;
+      inset: 0;
       width: 100%;
       height: 100%;
-      animation: rotateSVG 30s linear infinite;
-      filter: drop-shadow(0 0 24px rgba(0,212,212,0.5));
+      display: block;
+      cursor: grab;
+      touch-action: pan-y;
     }
 
-    @keyframes rotateSVG {
-      from { transform: rotateY(0deg); }
-      to   { transform: rotateY(360deg); }
-    }
+    .globe-wrap canvas:active { cursor: grabbing; }
 
     .hero-badge {
       font-family: var(--mono);
@@ -536,49 +536,9 @@
 <section id="hero">
   <h1 class="hero-title">VELTISTOS</h1>
 
-  <!-- Wireframe Globe SVG -->
+  <!-- Holographic Globe (canvas) -->
   <div class="globe-wrap">
-    <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <radialGradient id="globeGlow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="#00d4d4" stop-opacity="0.12"/>
-          <stop offset="100%" stop-color="#00d4d4" stop-opacity="0"/>
-        </radialGradient>
-      </defs>
-      <!-- Glow background -->
-      <ellipse cx="200" cy="200" rx="180" ry="180" fill="url(#globeGlow)"/>
-      <!-- Outer circle -->
-      <circle cx="200" cy="200" r="160" stroke="#00d4d4" stroke-width="1" fill="none" opacity="0.7"/>
-      <!-- Latitude lines -->
-      <ellipse cx="200" cy="200" rx="160" ry="40" stroke="#00d4d4" stroke-width="0.6" fill="none" opacity="0.5"/>
-      <ellipse cx="200" cy="200" rx="160" ry="90" stroke="#00d4d4" stroke-width="0.6" fill="none" opacity="0.45"/>
-      <ellipse cx="200" cy="140" rx="135" ry="32" stroke="#00d4d4" stroke-width="0.5" fill="none" opacity="0.4"/>
-      <ellipse cx="200" cy="260" rx="135" ry="32" stroke="#00d4d4" stroke-width="0.5" fill="none" opacity="0.4"/>
-      <ellipse cx="200" cy="80"  rx="90" ry="20" stroke="#00d4d4" stroke-width="0.5" fill="none" opacity="0.35"/>
-      <ellipse cx="200" cy="320" rx="90" ry="20" stroke="#00d4d4" stroke-width="0.5" fill="none" opacity="0.35"/>
-      <!-- Vertical meridians -->
-      <ellipse cx="200" cy="200" rx="80"  ry="160" stroke="#00d4d4" stroke-width="0.5" fill="none" opacity="0.5"/>
-      <ellipse cx="200" cy="200" rx="30"  ry="160" stroke="#00d4d4" stroke-width="0.4" fill="none" opacity="0.4"/>
-      <ellipse cx="200" cy="200" rx="130" ry="160" stroke="#00d4d4" stroke-width="0.5" fill="none" opacity="0.5"/>
-      <!-- Vertical axis -->
-      <line x1="200" y1="40" x2="200" y2="360" stroke="#00d4d4" stroke-width="0.6" opacity="0.5"/>
-      <!-- Horizontal axis -->
-      <line x1="40" y1="200" x2="360" y2="200" stroke="#00d4d4" stroke-width="0.6" opacity="0.5"/>
-      <!-- Node dots -->
-      <circle cx="200" cy="200" r="4" fill="#00d4d4" opacity="0.9"/>
-      <circle cx="280" cy="155" r="2.5" fill="#00d4d4" opacity="0.8"/>
-      <circle cx="140" cy="170" r="2"   fill="#00d4d4" opacity="0.7"/>
-      <circle cx="310" cy="230" r="2"   fill="#00d4d4" opacity="0.7"/>
-      <circle cx="160" cy="240" r="2.5" fill="#00d4d4" opacity="0.8"/>
-      <circle cx="240" cy="120" r="2"   fill="#00d4d4" opacity="0.7"/>
-      <!-- Connection lines between nodes -->
-      <line x1="200" y1="200" x2="280" y2="155" stroke="#00d4d4" stroke-width="0.7" opacity="0.5"/>
-      <line x1="200" y1="200" x2="140" y2="170" stroke="#00d4d4" stroke-width="0.7" opacity="0.5"/>
-      <line x1="200" y1="200" x2="310" y2="230" stroke="#00d4d4" stroke-width="0.7" opacity="0.5"/>
-      <line x1="200" y1="200" x2="160" y2="240" stroke="#00d4d4" stroke-width="0.7" opacity="0.5"/>
-      <line x1="280" y1="155" x2="240" y2="120" stroke="#00d4d4" stroke-width="0.5" opacity="0.35"/>
-      <line x1="140" y1="170" x2="160" y2="240" stroke="#00d4d4" stroke-width="0.5" opacity="0.35"/>
-    </svg>
+    <canvas id="veltistos-globe" aria-label="Rotating holographic globe"></canvas>
   </div>
 
   <div class="hero-badge">
@@ -793,6 +753,176 @@
     <a href="#" aria-label="TikTok">♪</a>
   </div>
 </footer>
+
+<script>
+/* VELTISTOS GLOBE: no dependencies / canvas 2D */
+const LAND="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADA/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPj/z////3EAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/++f///wcAAPADgAEAAOADAAAAAAAAAAAAAAAg3N4f/v///wcAAB8AAAAAAAA4AAAAAAAAAAAAAAADAOAH/P///wcAAA4AAAAAAAAwAAAAAAAAAAAAAAC8cQwBAP///wcAAAAAAIAHAMD/DwDwAAAAAAAAAOAAAAAAAPz//wMAAAAAAGAAAPz/AQAAAAAAAAAAAOBdc/MDAPj//wEAAAAAABjAwP///z9gAAAAA4AAAED8A/P/AOD//wEAAAAAADjg/v///z//HwCAAPj/A0/8X4PwB/D//wAAAOA/AADh/v///////wM+A/7///8Pw56BB+D/DwAAAPz/Y+zf/f//////////N/D///////+Bf/D/AQAAAP7/x////v//////////GP7//////7/wJ+AfAH4AAD9++P//////////////AOD//////88GH8AfAAwAwJ////////////////9/APz//////wNxDIAPAAAA8M///////////////98/APzf/////wHwAwAGAAAA+M///////////////+ADAPAB+P///wHwMwAAAAAA8A//////////////ZBgAAIACgP///wPgfwAAAAAQAAf///////////8fAA4AACAAAP///z/gfwAAAAAwYMf///////////8PAB8AAAQAAP7////5/wMAAABoQOj///////////8DAA8AAAAAgPz////5/wcAAADs+P////////////9/AAcAAAAAAPj////7/wMAAADg+f////////////9/AAEAAAAAAPj/////zwAAAAAw/v////////////+/AAAAAAAAAPD/////Gw4AAACg//////////////8fAAAAAAAAAOD/////HxAAAADA//////////////8fAAAAAAAAAOD//////wAAAACA//9P/vj///////8PAAAAAAAAAOD/////EwAAAACA//wHfPz////////HAAAAAAAAAOD/////AQAAAAD8g/EH8Pj////////gAAAAAAAAAOD/////AAAAAAD8Aebn+fH//////z8AAAAAAAAAAOD///9/AAAAAAD8AGT8//H//////xpgAAAAAAAAAMD///8/AAAAAAD8AMT8//H/////fzggAAAAAAAAAID///8fAAAAAABwdAD8/////////zE4AAAAAAAAAID///8fAAAAAACwfwBD/////////zA/AAAAAAAAAAD+//8PAAAAAAD4fwAA/////////wAHAAAAAAAAAAD8//8DAAAAAAD8/2OA/////////4EAAAAAAAAAAADo//8DAAAAAAD8/+///////////wEAAAAAAAAAAADo/wkCAAAAAAD+//////z//////wEAAAAAAAAAAADYfwACAAAAAID///8///n//////wEAAAAAAAAAAACgfwAWAAAAAMD///9//+H//////wAAAAAAAAAAAAAgfwAAAAAAAMD///9//jPg////fwAAAAAAAAAAAAAAfgAAAAAAAOD//////H/A////PwEAAAAAAAAAAAAAfAAIAAAAAOD//////f/A/+f/BwAAAAAAAAAAAAAAfDBwAAAAAOD/////+X8A/sN/AAAAAAAAAAAAAAAA+DgAAwAAAOD/////+T8A/oB/AwAAAAAAAAAAAAAA4B8AAAAAAOD/////8x8AfoB/AAMAAAAAAAAAAAAAgPwAAAAAAOD/////8wcAPoD+AAEAAAAAAAAAAAAAAPgBAAAAAOD/////7wEAHAD+AQEAAAAAAAAAAAAAAMAAAAAAAOD/////PwAAHAD8AQQAAAAAAAAAAAAAAICAAgAAAMD/////HwMAGADgAAoAAAAAAAAAAAAAAADBfgAAAID//////wMAGABAAAAAAAAAAAAAAAAAAADy/wAAAID//////wEAIAAGAAwAAAAAAAAAAAAAAADw/wEAAAD//////wEAIAAIAAgAAAAAAAAAAAAAAADw/x8AAAD8+P///wAAAAAZYAAAAAAAAAAAAAAAAADg/z8AAAAAwP///wAAAAAbMAAAAAAAAAAAAAAAAADw/z8AAAAAwP//fwAAAAAWfAAAAAAAAAAAAAAAAAD4/38AAAAAwP//HwAAAAAcficAAAAAAAAAAAAAAAD8//8BAAAAwP//DwAAAAAYPiABAAAAAAAAAAAAAAD8//8DAAAAwP//BwAAAAA4vgEaAAAAAAAAAAAAAAD8//8/AAAAgP//BwAAAABwEBL+AAAAAAAAAAAAAAD8////AAAAAP//AwAAAABgAADwAQAAAAAAAAAAAAD8////AQAAAP//AwAAAADABADyAwEAAAAAAAAAAAD4////AQAAAP7/AwAAAAAAHADwBgQAAAAAAAAAAADw////AAAAAP7/BwAAAAAAAAQADAAAAAAAAAAAAADw//9/AAAAAP7/BwAAAAAAAAAAAAAAAAAAAAAAAADg//9/AAAAAP7/BwAAAAAAAICHAAAAAAAAAAAAAADg//8/AAAAAP//BwEAAAAAANDHAAAAAAAAAAAAAADA//8/AAAAAP//hwMAAAAAAPjHAQAAAAAAAAAAAAAA//8/AAAAAP//4QEAAAAAAPzfAQAAAAAAAAAAAAAA/v8/AAAAAP//4AEAAAAAAP7/AwAAAAAAAAAAAAAA/v8fAAAAAP5/wAAAAAAAgP//ByAAAAAAAAAAAAAA/v8fAAAAAP7/4AAAAAAA4P//D0AAAAAAAAAAAAAA/v8HAAAAAPz/4AAAAAAA8P//HwAAAAAAAAAAAAAA/v8AAAAAAPx/YAAAAAAA8P//PwAAAAAAAAAAAAAA/v8AAAAAAPw/AAAAAAAA8P//PwAAAAAAAAAAAAAA/v8AAAAAAPw/AAAAAAAA8P//PwAAAAAAAAAAAAAA/38AAAAAAPgfAAAAAAAA4P//PwAAAAAAAAAAAAAA/z8AAAAAAPAPAAAAAAAA4P//PwAAAAAAAAAAAAAA/x8AAAAAAPAHAAAAAAAA4B/+PwAAAAAAAAAAAAAA/w8AAAAAAPABAAAAAAAA4Af0HwAAAAAAAAAAAAAA/wMAAAAAAAAAAAAAAAAAAADwDwAIAAAAAAAAAACA/wMAAAAAAAAAAAAAAAAAAADgDwAQAAAAAAAAAACA/wEAAAAAAAAAAAAAAAAAAADAAgBwAAAAAAAAAACAfwAAAAAAAAAAAAAAAAAAAAAAAAAwAAAAAAAAAACAHwAAAAAAAAAAAAAAAAAAAAAABgAQAAAAAAAAAACAHwAAAAAAAAAAAAAAAAAAAAAABgAMAAAAAAAAAADADwAAAAAAAAAAAAAAAAAAAAAAAAADAAAAAAAAAADABwAAAAAAAAAAAAAAAAAAAAAAAIADAAAAAAAAAADADwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADABwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAgwEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACABwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGAAAAAAAAAAAADwAAAR4Pv4HAAAAAAAAAAAAAAAACAAAAAAAAAAA4P8/4P//////BwAAAAAAAAAAAAAAPwAAAAAAAADg//8//P///////wMAAAAAAAAAAACAewAAAADI/v////8///////////8BAAAAAAAAABAAeAAAAID///////////////////8DAAAAAAAe4P//fwAAAMD//////////////////38AAADA////////BwAAAPz//////////////////x8AAEDz//////8/AAAA8P///////////////////x8AABj///////8PAIAH/////////////////////38AAADA//////8/gPAD4P///////////////////wcAAAD+////////P4Dx/////////////////////w8AAAD8//////////////////////////////////8A/wMA/v//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////";
+(function(){
+  const cvs=document.getElementById('veltistos-globe'); if(!cvs) return;
+  const ctx=cvs.getContext('2d');
+  const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const rnd=(a,b)=>a+Math.random()*(b-a);
+  const TAU=Math.PI*2;
+
+  // ---------- データ生成 ----------
+  // 1) 大陸ドット（2D: 1.5°グリッドの陸地ビットマップから）
+  const bin=atob(LAND), GW=240, GH=120, land=[];
+  for(let i=0;i<GW*GH;i++){
+    if(!(bin.charCodeAt(i>>3)&(1<<(i&7)))) continue;
+    if(Math.random()>0.62) continue;
+    const x=i%GW, y=(i/GW)|0;
+    const lon=(-180+(x+Math.random())*1.5)*Math.PI/180, lat=(90-(y+Math.random())*1.5)*Math.PI/180;
+    land.push([Math.cos(lat)*Math.sin(lon), Math.sin(lat), Math.cos(lat)*Math.cos(lon), Math.random()]);
+  }
+  // 2) 海のうっすらドット（フィボナッチ球）
+  const sea=[], NS=1100, GA=Math.PI*(3-Math.sqrt(5));
+  for(let i=0;i<NS;i++){const y=1-2*(i+.5)/NS, r=Math.sqrt(1-y*y), t=i*GA; sea.push([r*Math.cos(t),y,r*Math.sin(t)]);}
+  // 3) プレクサス網（球面の少し外側のノード＋近傍リンク）
+  const nodes=[], links=[];
+  for(let i=0;i<330;i++){
+    const u=rnd(-1,1), t=rnd(0,TAU), s=Math.sqrt(1-u*u), k=rnd(1.03,1.13);
+    nodes.push([s*Math.cos(t)*k, u*k, s*Math.sin(t)*k, Math.random()]);
+  }
+  for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++){
+    const a=nodes[i], b=nodes[j], d=Math.hypot(a[0]-b[0],a[1]-b[1],a[2]-b[2]);
+    if(d<0.30) links.push([i,j,1-d/0.30]);
+  }
+  // 4) 軌道リング（傾いた円＋流れる光の粒）
+  function ring(r,tiltX,tiltZ,speed,beads,hue){
+    const cx=Math.cos(tiltX), sx=Math.sin(tiltX), cz=Math.cos(tiltZ), sz=Math.sin(tiltZ);
+    const u=[cz,sz,0], v=[-sz*cx, cz*cx, sx];   // 平面の基底
+    const b=[]; for(let i=0;i<beads;i++) b.push([Math.random()*TAU, rnd(.4,1), Math.random()<.22]);
+    return {r,u,v,speed,beads:b,hue};
+  }
+  const rings=[ ring(1.30, 1.25, 0.35, 0.22, 46,'c'), ring(1.42,-1.05,-0.55,-0.15,36,'b'), ring(1.22, 0.30, 1.30, 0.30,26,'c') ];
+  // 5) 周囲の浮遊ダスト
+  const dust=[]; for(let i=0;i<170;i++){const u=rnd(-1,1),t=rnd(0,TAU),s=Math.sqrt(1-u*u),k=rnd(1.15,1.85);dust.push([s*Math.cos(t)*k,u*k,s*Math.sin(t)*k,Math.random()*TAU]);}
+
+  // ---------- 描画 ----------
+  let W=0,H=0,R=0,CX=0,CY=0,dpr=1;
+  function resize(){
+    const b=cvs.getBoundingClientRect(); dpr=Math.min(window.devicePixelRatio||1,2);
+    W=cvs.width=Math.round(b.width*dpr); H=cvs.height=Math.round(b.height*dpr);
+    R=Math.min(W,H)*0.29; CX=W/2; CY=H/2;
+  }
+  resize(); window.addEventListener('resize',resize);
+
+  const F=8; // 透視の強さ
+  let yaw=0, pitch=0.38, tYaw=0, tPitch=0.38, drag=null, auto=1;
+  let cy_=1,sy_=0,cp_=1,sp_=0;
+  function setRot(y,p){cy_=Math.cos(y);sy_=Math.sin(y);cp_=Math.cos(p);sp_=Math.sin(p);}
+  // 回転→投影: 戻り値 [sx,sy,z,scale]
+  const P=[0,0,0,0];
+  function proj(x,y,z){
+    const x1=x*cy_+z*sy_, z1=-x*sy_+z*cy_;
+    const y2=y*cp_-z1*sp_, z2=y*sp_+z1*cp_;
+    const s=F/(F-z2);
+    P[0]=CX+x1*s*R; P[1]=CY-y2*s*R; P[2]=z2; P[3]=s; return P;
+  }
+  // 球の背面（中心から半径内かつ奥）に隠れているか
+  function hidden(px,py,z){ return z<0 && Math.hypot(px-CX,py-CY)<R*1.0; }
+
+  const C={c:[25,230,230], b:[70,140,255], m:[190,90,255], g:[255,214,120]};
+  const rgba=(c,a)=>`rgba(${c[0]},${c[1]},${c[2]},${a})`;
+
+  cvs.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,yaw:tYaw,pitch:tPitch};cvs.setPointerCapture(e.pointerId);auto=0;});
+  cvs.addEventListener('pointermove',e=>{ if(!drag) return;
+    tYaw=drag.yaw+(e.clientX-drag.x)*0.008; tPitch=Math.max(-1.1,Math.min(1.1,drag.pitch+(e.clientY-drag.y)*0.006)); });
+  const end=()=>{drag=null;setTimeout(()=>auto=1,1200);};
+  cvs.addEventListener('pointerup',end); cvs.addEventListener('pointercancel',end);
+
+  let last=performance.now(), time=0;
+  function frame(now){
+    const dt=Math.min(.05,(now-last)/1000); last=now; time+=dt;
+    if(auto&&!reduce) tYaw+=dt*0.12;
+    yaw+=(tYaw-yaw)*0.08; pitch+=(tPitch-pitch)*0.08;
+
+    ctx.clearRect(0,0,W,H);
+    ctx.globalCompositeOperation='lighter';
+
+    // 外側のオーラ／星雲
+    let g=ctx.createRadialGradient(CX,CY,R*0.2,CX,CY,R*2.0);
+    g.addColorStop(0,'rgba(20,200,210,0.16)'); g.addColorStop(.45,'rgba(30,110,200,0.07)'); g.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+    const ox=CX+Math.cos(time*.2)*R*.35, oy=CY+Math.sin(time*.17)*R*.3;
+    g=ctx.createRadialGradient(ox,oy,0,ox,oy,R*1.1);
+    g.addColorStop(0,'rgba(150,70,255,0.10)'); g.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+
+    // 球体本体：内側から光る体積感
+    g=ctx.createRadialGradient(CX-R*.28,CY-R*.32,R*.05,CX,CY,R*1.02);
+    g.addColorStop(0,'rgba(60,240,240,0.22)'); g.addColorStop(.55,'rgba(15,120,140,0.10)');
+    g.addColorStop(.9,'rgba(20,200,210,0.10)'); g.addColorStop(1,'rgba(40,240,240,0.30)');
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(CX,CY,R*1.0,0,TAU); ctx.fill();
+    // リムライト
+    ctx.save(); ctx.shadowColor='rgba(40,240,240,0.9)'; ctx.shadowBlur=R*0.12;
+    ctx.strokeStyle='rgba(60,235,235,0.45)'; ctx.lineWidth=1.2*dpr; ctx.beginPath(); ctx.arc(CX,CY,R*1.003,0,TAU); ctx.stroke(); ctx.restore();
+
+    // ダスト
+    setRot(yaw*.5,pitch);
+    for(const d of dust){ proj(d[0],d[1],d[2]); if(hidden(P[0],P[1],P[2])) continue;
+      const a=(.25+.35*Math.sin(time*1.6+d[3]))*(.5+.5*(P[2]+1.8)/3.6); if(a<=0) continue;
+      ctx.fillStyle=rgba(C.c,a.toFixed(3)); const s=1.3*dpr*P[3]; ctx.fillRect(P[0],P[1],s,s); }
+
+    // 経緯線（元デザインのワイヤーフレームを薄く継承）
+    setRot(yaw,pitch);
+    ctx.lineWidth=0.8*dpr;
+    const line=(fn)=>{ let prev=null; for(let i=0;i<=72;i++){ const q=fn(i/72*TAU); proj(q[0],q[1],q[2]);
+        const cur=[P[0],P[1],P[2]]; if(prev){ const z=(prev[2]+cur[2])/2; ctx.strokeStyle=rgba(C.c,(z>0? .05+.13*z : .025).toFixed(3));
+          ctx.beginPath(); ctx.moveTo(prev[0],prev[1]); ctx.lineTo(cur[0],cur[1]); ctx.stroke(); } prev=cur; } };
+    for(let k=1;k<6;k++){ const lat=-Math.PI/2+k*Math.PI/6, cl=Math.cos(lat), sl=Math.sin(lat); line(t=>[cl*Math.cos(t),sl,cl*Math.sin(t)]); }
+    for(let k=0;k<6;k++){ const lon=k*Math.PI/6, c=Math.cos(lon), s=Math.sin(lon); line(t=>[Math.cos(t)*s,Math.sin(t),Math.cos(t)*c]); }
+
+    // 海ドット
+    for(const p of sea){ proj(p[0],p[1],p[2]); const z=P[2];
+      const a=z>0? .07+.22*z : .03; ctx.fillStyle=rgba(C.c,a.toFixed(3)); const s=1.1*dpr; ctx.fillRect(P[0]-s/2,P[1]-s/2,s,s); }
+
+    // 大陸ドット（手前ほど明るく大きく、ところどころ星雲色）
+    for(const p of land){ proj(p[0],p[1],p[2]); const z=P[2];
+      const tw=.75+.25*Math.sin(time*2+p[3]*40);
+      const a=(z>0? .25+.7*z : .06)*tw;
+      const col=p[3]<.08? C.m : p[3]<.2? C.b : C.c;
+      ctx.fillStyle=rgba(col,a.toFixed(3)); const s=(z>0?1.7:1.1)*dpr*P[3]; ctx.fillRect(P[0]-s/2,P[1]-s/2,s,s); }
+
+    // プレクサス（別速度で回して奥行き＝視差を出す）
+    setRot(yaw*1.35+0.6,pitch);
+    const pts=nodes.map(n=>{proj(n[0],n[1],n[2]); return [P[0],P[1],P[2],P[3],hidden(P[0],P[1],P[2])];});
+    ctx.lineWidth=0.7*dpr;
+    for(const [i,j,w] of links){ const a=pts[i], b=pts[j]; if(a[4]&&b[4]) continue;
+      const z=(a[2]+b[2])/2; const al=w*(z>0? .18+.45*z : .06);
+      ctx.strokeStyle=rgba(z>0?[150,240,255]:C.c,al.toFixed(3)); ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.stroke(); }
+    for(let i=0;i<pts.length;i++){ const p=pts[i]; if(p[4]) continue; const z=p[2];
+      const a=(z>0? .35+.6*z : .12)*(.6+.4*Math.sin(time*3+nodes[i][3]*30)); const s=(1.4+nodes[i][3]*1.6)*dpr*p[3];
+      ctx.fillStyle=rgba([190,250,255],a.toFixed(3)); ctx.beginPath(); ctx.arc(p[0],p[1],s,0,TAU); ctx.fill(); }
+
+    // 軌道リング
+    setRot(yaw*.4,pitch);
+    for(const rg of rings){
+      const pt=t=>{const c=Math.cos(t)*rg.r, s=Math.sin(t)*rg.r; return proj(rg.u[0]*c+rg.v[0]*s, rg.u[1]*c+rg.v[1]*s, rg.u[2]*c+rg.v[2]*s);};
+      const col=C[rg.hue]; let prev=null; ctx.lineWidth=1*dpr;
+      for(let i=0;i<=160;i++){ pt(i/160*TAU); const cur=[P[0],P[1],P[2]];
+        if(prev){ const hid=hidden(cur[0],cur[1],cur[2]); const a=hid? .03 : (.14+.26*(cur[2]+1.5)/3);
+          ctx.strokeStyle=rgba(col,a.toFixed(3)); ctx.beginPath(); ctx.moveTo(prev[0],prev[1]); ctx.lineTo(cur[0],cur[1]); ctx.stroke(); }
+        prev=cur; }
+      for(const b of rg.beads){ const t=b[0]+time*rg.speed*(reduce?0:1); pt(t); if(hidden(P[0],P[1],P[2])) continue;
+        const a=(.35+.6*(P[2]+1.5)/3)*b[1]; const s=(b[2]?2.6:1.8)*dpr*P[3];
+        const c=b[2]? C.g : col;
+        ctx.fillStyle=rgba(c,(a*.25).toFixed(3)); ctx.fillRect(P[0]-s*1.8,P[1]-s*1.8,s*3.6,s*3.6);
+        ctx.fillStyle=rgba(c,a.toFixed(3)); ctx.fillRect(P[0]-s/2,P[1]-s/2,s,s); }
+    }
+
+    // 中心のコア光
+    const pulse=.75+.25*Math.sin(time*1.4);
+    g=ctx.createRadialGradient(CX,CY,0,CX,CY,R*.35);
+    g.addColorStop(0,`rgba(220,255,255,${.35*pulse})`); g.addColorStop(.25,`rgba(60,230,240,${.12*pulse})`); g.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(CX,CY,R*.35,0,TAU); ctx.fill();
+
+    ctx.globalCompositeOperation='source-over';
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
 
 </body>
 </html>
