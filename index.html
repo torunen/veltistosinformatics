@@ -86,6 +86,36 @@
 
     .nav-links a:hover { color: var(--cyan); }
 
+    .nav-mobile-only { display: none; }
+
+    .nav-toggle {
+      display: none;
+      width: 44px;
+      height: 44px;
+      background: transparent;
+      border: 1px solid var(--cyan-border);
+      cursor: pointer;
+      position: relative;
+      padding: 0;
+    }
+
+    .nav-toggle span {
+      position: absolute;
+      left: 11px;
+      right: 11px;
+      height: 1.5px;
+      background: var(--cyan);
+      transition: transform 0.25s, opacity 0.2s, top 0.25s;
+    }
+
+    .nav-toggle span:nth-child(1) { top: 14px; }
+    .nav-toggle span:nth-child(2) { top: 21px; }
+    .nav-toggle span:nth-child(3) { top: 28px; }
+
+    nav.open .nav-toggle span:nth-child(1) { top: 21px; transform: rotate(45deg); }
+    nav.open .nav-toggle span:nth-child(2) { opacity: 0; }
+    nav.open .nav-toggle span:nth-child(3) { top: 21px; transform: rotate(-45deg); }
+
     .btn-connect {
       font-family: var(--mono);
       font-size: 11px;
@@ -502,6 +532,31 @@
     /* ── RESPONSIVE ── */
     @media (max-width: 768px) {
       nav { padding: 0 20px; }
+      .btn-connect { display: none; }
+      .nav-toggle { display: block; }
+      .nav-links {
+        position: absolute;
+        top: 64px; left: 0; right: 0;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        background: rgba(5, 10, 10, 0.97);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--cyan-border);
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+      }
+      nav.open .nav-links { max-height: 320px; }
+      .nav-links li { border-top: 1px solid rgba(0, 212, 212, 0.12); }
+      .nav-links a {
+        display: block;
+        padding: 18px 24px;
+        font-size: 13px;
+        letter-spacing: 0.2em;
+      }
+      .nav-mobile-only { display: block; }
+      .nav-mobile-only a { color: var(--cyan); }
       .about-grid { grid-template-columns: 1fr; }
       .philosophy-grid { grid-template-columns: 1fr; }
       .apps-grid { grid-template-columns: 1fr; }
@@ -524,12 +579,16 @@
     </svg>
     <span class="nav-logo-text">Veltistos<br>Informatics</span>
   </a>
-  <ul class="nav-links">
+  <ul class="nav-links" id="nav-links">
     <li><a href="#about">ABOUT</a></li>
     <li><a href="#philosophy">PHILOSOPHY</a></li>
     <li><a href="#apps">PROJECTS</a></li>
+    <li class="nav-mobile-only"><a href="#contact">CONNECT</a></li>
   </ul>
   <a href="#contact" class="btn-connect">CONNECT</a>
+  <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav-links">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
 
 <!-- ── HERO ── -->
@@ -691,6 +750,48 @@
         <p class="app-desc">Milk Checker helps international travelers easily identify milk and soy milk products in Japan.</p>
       </div>
 
+      <!-- 11 -->
+      <div class="app-card">
+        <img src="icons/arterial.png" alt="Arterial: Traffic Sandbox" class="app-icon">
+        <p class="app-name">ARTERIAL: TRAFFIC SANDBOX</p>
+        <p class="app-desc">Design your own road network and watch traffic respond. Edit intersections and roads, then run an on-device traffic simulation to see how congestion and flow change.</p>
+      </div>
+
+      <!-- 12 -->
+      <div class="app-card">
+        <img src="icons/orbitfix.png" alt="OrbitFix: GNSS Satellite Map" class="app-icon">
+        <p class="app-name">ORBITFIX: GNSS SATELLITE MAP</p>
+        <p class="app-desc">See which satellites are overhead right now. GPS, Galileo, QZSS (Michibiki) and more on a 3D Earth and sky plot, calculated from real orbits.</p>
+      </div>
+
+      <!-- 13 -->
+      <div class="app-card">
+        <img src="icons/tama-chan-walk.png" alt="たまちゃんWalk" class="app-icon">
+        <p class="app-name">たまちゃんWALK</p>
+        <p class="app-desc">A 3D calico cat who acts like a real cat and learns over time, like coming when called and opening doors. Inspired by Tama, a much-loved family cat.</p>
+      </div>
+
+      <!-- 14 -->
+      <div class="app-card">
+        <img src="icons/lunar-touchdown.png" alt="Lunar Touchdown" class="app-icon">
+        <p class="app-name">LUNAR TOUCHDOWN</p>
+        <p class="app-desc">Explore a zoomable 3D Moon with famous craters and Apollo landing sites, then pick a site and pilot your own lander to touchdown.</p>
+      </div>
+
+      <!-- 15 -->
+      <div class="app-card">
+        <img src="icons/geoswap.png" alt="GeoSwap – Swap the World" class="app-icon">
+        <p class="app-name">GEOSWAP – SWAP THE WORLD</p>
+        <p class="app-desc">Shuffle the countries of the world across the globe and see what the real weather would be like at your country&rsquo;s new location.</p>
+      </div>
+
+      <!-- 16 -->
+      <div class="app-card">
+        <img src="icons/holoverse.png" alt="Holoverse: AdS/CFT Simulator" class="app-icon">
+        <p class="app-name">HOLOVERSE: ADS/CFT SIMULATOR</p>
+        <p class="app-desc">A hands-on view of the holographic principle. Link and cut entanglement between qubits on a 2D boundary and watch curved 3D spacetime emerge inside.</p>
+      </div>
+
     </div>
   </div>
 </section>
@@ -754,6 +855,16 @@
   </div>
 </footer>
 
+<script>
+/* Mobile menu */
+(function(){
+  const nav=document.querySelector('nav'), btn=nav&&nav.querySelector('.nav-toggle'); if(!btn) return;
+  const set=o=>{nav.classList.toggle('open',o);btn.setAttribute('aria-expanded',o);btn.setAttribute('aria-label',o?'Close menu':'Open menu');};
+  btn.addEventListener('click',()=>set(!nav.classList.contains('open')));
+  nav.querySelectorAll('.nav-links a').forEach(a=>a.addEventListener('click',()=>set(false)));
+  document.addEventListener('click',e=>{ if(!nav.contains(e.target)) set(false); });
+})();
+</script>
 <script>
 /* VELTISTOS GLOBE: no dependencies / canvas 2D */
 const LAND="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADA/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPj/z////3EAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/++f///wcAAPADgAEAAOADAAAAAAAAAAAAAAAg3N4f/v///wcAAB8AAAAAAAA4AAAAAAAAAAAAAAADAOAH/P///wcAAA4AAAAAAAAwAAAAAAAAAAAAAAC8cQwBAP///wcAAAAAAIAHAMD/DwDwAAAAAAAAAOAAAAAAAPz//wMAAAAAAGAAAPz/AQAAAAAAAAAAAOBdc/MDAPj//wEAAAAAABjAwP///z9gAAAAA4AAAED8A/P/AOD//wEAAAAAADjg/v///z//HwCAAPj/A0/8X4PwB/D//wAAAOA/AADh/v///////wM+A/7///8Pw56BB+D/DwAAAPz/Y+zf/f//////////N/D///////+Bf/D/AQAAAP7/x////v//////////GP7//////7/wJ+AfAH4AAD9++P//////////////AOD//////88GH8AfAAwAwJ////////////////9/APz//////wNxDIAPAAAA8M///////////////98/APzf/////wHwAwAGAAAA+M///////////////+ADAPAB+P///wHwMwAAAAAA8A//////////////ZBgAAIACgP///wPgfwAAAAAQAAf///////////8fAA4AACAAAP///z/gfwAAAAAwYMf///////////8PAB8AAAQAAP7////5/wMAAABoQOj///////////8DAA8AAAAAgPz////5/wcAAADs+P////////////9/AAcAAAAAAPj////7/wMAAADg+f////////////9/AAEAAAAAAPj/////zwAAAAAw/v////////////+/AAAAAAAAAPD/////Gw4AAACg//////////////8fAAAAAAAAAOD/////HxAAAADA//////////////8fAAAAAAAAAOD//////wAAAACA//9P/vj///////8PAAAAAAAAAOD/////EwAAAACA//wHfPz////////HAAAAAAAAAOD/////AQAAAAD8g/EH8Pj////////gAAAAAAAAAOD/////AAAAAAD8Aebn+fH//////z8AAAAAAAAAAOD///9/AAAAAAD8AGT8//H//////xpgAAAAAAAAAMD///8/AAAAAAD8AMT8//H/////fzggAAAAAAAAAID///8fAAAAAABwdAD8/////////zE4AAAAAAAAAID///8fAAAAAACwfwBD/////////zA/AAAAAAAAAAD+//8PAAAAAAD4fwAA/////////wAHAAAAAAAAAAD8//8DAAAAAAD8/2OA/////////4EAAAAAAAAAAADo//8DAAAAAAD8/+///////////wEAAAAAAAAAAADo/wkCAAAAAAD+//////z//////wEAAAAAAAAAAADYfwACAAAAAID///8///n//////wEAAAAAAAAAAACgfwAWAAAAAMD///9//+H//////wAAAAAAAAAAAAAgfwAAAAAAAMD///9//jPg////fwAAAAAAAAAAAAAAfgAAAAAAAOD//////H/A////PwEAAAAAAAAAAAAAfAAIAAAAAOD//////f/A/+f/BwAAAAAAAAAAAAAAfDBwAAAAAOD/////+X8A/sN/AAAAAAAAAAAAAAAA+DgAAwAAAOD/////+T8A/oB/AwAAAAAAAAAAAAAA4B8AAAAAAOD/////8x8AfoB/AAMAAAAAAAAAAAAAgPwAAAAAAOD/////8wcAPoD+AAEAAAAAAAAAAAAAAPgBAAAAAOD/////7wEAHAD+AQEAAAAAAAAAAAAAAMAAAAAAAOD/////PwAAHAD8AQQAAAAAAAAAAAAAAICAAgAAAMD/////HwMAGADgAAoAAAAAAAAAAAAAAADBfgAAAID//////wMAGABAAAAAAAAAAAAAAAAAAADy/wAAAID//////wEAIAAGAAwAAAAAAAAAAAAAAADw/wEAAAD//////wEAIAAIAAgAAAAAAAAAAAAAAADw/x8AAAD8+P///wAAAAAZYAAAAAAAAAAAAAAAAADg/z8AAAAAwP///wAAAAAbMAAAAAAAAAAAAAAAAADw/z8AAAAAwP//fwAAAAAWfAAAAAAAAAAAAAAAAAD4/38AAAAAwP//HwAAAAAcficAAAAAAAAAAAAAAAD8//8BAAAAwP//DwAAAAAYPiABAAAAAAAAAAAAAAD8//8DAAAAwP//BwAAAAA4vgEaAAAAAAAAAAAAAAD8//8/AAAAgP//BwAAAABwEBL+AAAAAAAAAAAAAAD8////AAAAAP//AwAAAABgAADwAQAAAAAAAAAAAAD8////AQAAAP//AwAAAADABADyAwEAAAAAAAAAAAD4////AQAAAP7/AwAAAAAAHADwBgQAAAAAAAAAAADw////AAAAAP7/BwAAAAAAAAQADAAAAAAAAAAAAADw//9/AAAAAP7/BwAAAAAAAAAAAAAAAAAAAAAAAADg//9/AAAAAP7/BwAAAAAAAICHAAAAAAAAAAAAAADg//8/AAAAAP//BwEAAAAAANDHAAAAAAAAAAAAAADA//8/AAAAAP//hwMAAAAAAPjHAQAAAAAAAAAAAAAA//8/AAAAAP//4QEAAAAAAPzfAQAAAAAAAAAAAAAA/v8/AAAAAP//4AEAAAAAAP7/AwAAAAAAAAAAAAAA/v8fAAAAAP5/wAAAAAAAgP//ByAAAAAAAAAAAAAA/v8fAAAAAP7/4AAAAAAA4P//D0AAAAAAAAAAAAAA/v8HAAAAAPz/4AAAAAAA8P//HwAAAAAAAAAAAAAA/v8AAAAAAPx/YAAAAAAA8P//PwAAAAAAAAAAAAAA/v8AAAAAAPw/AAAAAAAA8P//PwAAAAAAAAAAAAAA/v8AAAAAAPw/AAAAAAAA8P//PwAAAAAAAAAAAAAA/38AAAAAAPgfAAAAAAAA4P//PwAAAAAAAAAAAAAA/z8AAAAAAPAPAAAAAAAA4P//PwAAAAAAAAAAAAAA/x8AAAAAAPAHAAAAAAAA4B/+PwAAAAAAAAAAAAAA/w8AAAAAAPABAAAAAAAA4Af0HwAAAAAAAAAAAAAA/wMAAAAAAAAAAAAAAAAAAADwDwAIAAAAAAAAAACA/wMAAAAAAAAAAAAAAAAAAADgDwAQAAAAAAAAAACA/wEAAAAAAAAAAAAAAAAAAADAAgBwAAAAAAAAAACAfwAAAAAAAAAAAAAAAAAAAAAAAAAwAAAAAAAAAACAHwAAAAAAAAAAAAAAAAAAAAAABgAQAAAAAAAAAACAHwAAAAAAAAAAAAAAAAAAAAAABgAMAAAAAAAAAADADwAAAAAAAAAAAAAAAAAAAAAAAAADAAAAAAAAAADABwAAAAAAAAAAAAAAAAAAAAAAAIADAAAAAAAAAADADwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADABwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAgwEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACABwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGAAAAAAAAAAAADwAAAR4Pv4HAAAAAAAAAAAAAAAACAAAAAAAAAAA4P8/4P//////BwAAAAAAAAAAAAAAPwAAAAAAAADg//8//P///////wMAAAAAAAAAAACAewAAAADI/v////8///////////8BAAAAAAAAABAAeAAAAID///////////////////8DAAAAAAAe4P//fwAAAMD//////////////////38AAADA////////BwAAAPz//////////////////x8AAEDz//////8/AAAA8P///////////////////x8AABj///////8PAIAH/////////////////////38AAADA//////8/gPAD4P///////////////////wcAAAD+////////P4Dx/////////////////////w8AAAD8//////////////////////////////////8A/wMA/v//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////";
